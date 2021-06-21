@@ -3,14 +3,15 @@ import React, { useState, useEffect } from "react";
 import { getBubbleSortAnimations } from "../algorithms/bubbleSort";
 import { getMergeSortAnimations } from "../algorithms/mergeSort";
 import { getQuickSortAnimations } from "../algorithms/quickSort";
-import { getHeapSortAnimations } from "../algorithms/heapSort";
+import { getSelectionSortAnimations } from "../algorithms/selectionSort";
+import { getInsertionSortAnimations } from "../algorithms/insertionSort";
 import "./SortingVisualizer.css";
 
 const SortingVisualizer = () => {
   const [value, setValue] = useState(19);
+  const [generate, setGenerate] = useState(false);
   const [selectedAlgo, setAlgo] = useState("Merge Sort");
   const [array, setArray] = useState([]);
-  const [disableSlider, setDisableSlider] = useState(false);
 
   useEffect(() => {
     const createArr = () => {
@@ -22,112 +23,55 @@ const SortingVisualizer = () => {
     };
 
     createArr();
-  }, [value]);
+  }, [value, generate]);
 
-  const mergeSort = () => {
-    const animations = getMergeSortAnimations(array);
+  const animate = (animations, duration) => {
     const arrayBars = document.getElementsByClassName("arrayBar");
     for (let i = 0; i < animations.length; i++) {
-      const isColorChange = i % 3 !== 2;
-      if (isColorChange) {
-        const [barOneIdx, barTwoIdx] = animations[i];
+      const [barOneIdx, barTwoIdx, isColor, isLast] = animations[i];
+      if (isColor) {
         const barOneStyle = arrayBars[barOneIdx].style;
         const barTwoStyle = arrayBars[barTwoIdx].style;
-        const color = i % 3 === 0 ? "red" : "#4ebd9c";
+        const color = !isLast ? "red" : "#4ebd9c";
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        }, i * (value < 20 ? 100 : 3));
+        }, i * (value < 20 ? 100 : duration));
       } else {
         setTimeout(() => {
-          const [barOneIdx, newHeight] = animations[i];
           const barOneStyle = arrayBars[barOneIdx].style;
-          barOneStyle.height = `${newHeight}px`;
+          barOneStyle.height = `${barTwoIdx}px`;
           if (value < 20) {
-            arrayBars[barOneIdx].innerHTML = newHeight;
+            arrayBars[barOneIdx].innerHTML = barTwoIdx;
           }
-        }, i * (value < 20 ? 100 : 3));
+        }, i * (value < 20 ? 100 : duration));
       }
     }
+  };
+
+  const mergeSort = () => {
+    const animations = getMergeSortAnimations(array);
+    animate(animations, 3);
   };
 
   const bubbleSort = () => {
     const animations = getBubbleSortAnimations(array);
-    const arrayBars = document.getElementsByClassName("arrayBar");
-    for (let i = 0; i < animations.length; i++) {
-      const [barOneIdx, barTwoIdx, isColor, isLast] = animations[i];
-      if (isColor) {
-        const barOneStyle = arrayBars[barOneIdx].style;
-        const barTwoStyle = arrayBars[barTwoIdx].style;
-        const color = !isLast ? "red" : "#4ebd9c";
-        setTimeout(() => {
-          barOneStyle.backgroundColor = color;
-          barTwoStyle.backgroundColor = color;
-        }, i * (value < 20 ? 100 : 1));
-      } else {
-        setTimeout(() => {
-          const [barOneIdx, newHeight] = animations[i];
-          const barOneStyle = arrayBars[barOneIdx].style;
-          barOneStyle.height = `${newHeight}px`;
-          if (value < 20) {
-            arrayBars[barOneIdx].innerHTML = newHeight;
-          }
-        }, i * (value < 20 ? 100 : 1));
-      }
-    }
+    animate(animations, 1);
   };
 
   const quickSort = () => {
     const animations = getQuickSortAnimations(array, 0, array.length - 1);
-    const arrayBars = document.getElementsByClassName("arrayBar");
-    for (let i = 0; i < animations.length; i++) {
-      const [barOneIdx, barTwoIdx, isColor, isLast] = animations[i];
-      if (isColor) {
-        const barOneStyle = arrayBars[barOneIdx].style;
-        const barTwoStyle = arrayBars[barTwoIdx].style;
-        const color = !isLast ? "red" : "#4ebd9c";
-        setTimeout(() => {
-          barOneStyle.backgroundColor = color;
-          barTwoStyle.backgroundColor = color;
-        }, i * (value < 20 ? 100 : 10));
-      } else {
-        setTimeout(() => {
-          const [barOneIdx, newHeight] = animations[i];
-          const barOneStyle = arrayBars[barOneIdx].style;
-          barOneStyle.height = `${newHeight}px`;
-          if (value < 20) {
-            arrayBars[barOneIdx].innerHTML = newHeight;
-          }
-        }, i * (value < 20 ? 100 : 10));
-      }
-    }
+    animate(animations, 10);
   };
 
-  const heapSort = () => {
-    const animations = getHeapSortAnimations(array);
-    console.log(animations);
-    const arrayBars = document.getElementsByClassName("arrayBar");
-    for (let i = 0; i < animations.length; i++) {
-      const [barOneIdx, barTwoIdx, isColor, isLast] = animations[i];
-      if (isColor) {
-        const barOneStyle = arrayBars[barOneIdx].style;
-        const barTwoStyle = arrayBars[barTwoIdx].style;
-        const color = !isLast ? "red" : "#4ebd9c";
-        setTimeout(() => {
-          barOneStyle.backgroundColor = color;
-          barTwoStyle.backgroundColor = color;
-        }, i * (value < 20 ? 100 : 10));
-      } else {
-        setTimeout(() => {
-          const [barOneIdx, newHeight] = animations[i];
-          const barOneStyle = arrayBars[barOneIdx].style;
-          barOneStyle.height = `${newHeight}px`;
-          if (value < 20) {
-            arrayBars[barOneIdx].innerHTML = newHeight;
-          }
-        }, i * (value < 20 ? 100 : 10));
-      }
-    }
+  const selectionSort = () => {
+    const animations = getSelectionSortAnimations(array);
+    animate(animations, 10);
+  };
+
+  const insertionSort = () => {
+    const animations = getInsertionSortAnimations(array);
+    animate(animations, 10);
   };
 
   const sort = () => {
@@ -144,8 +88,12 @@ const SortingVisualizer = () => {
         quickSort();
         break;
 
-      case "Heap Sort":
-        heapSort();
+      case "Selection Sort":
+        selectionSort();
+        break;
+
+      case "Insertion Sort":
+        insertionSort();
         break;
 
       default:
@@ -167,23 +115,23 @@ const SortingVisualizer = () => {
             </div>
           );
         }
+        if (value < 50) {
+          return (
+            <div
+              key={index}
+              className="arrayBar"
+              style={{ height: `${ele}px`, width: "20px" }}
+            />
+          );
+        }
         return (
           <div
             key={index}
             className="arrayBar"
-            style={{ height: `${ele}px`, width: "2.5px" }}
+            style={{ height: `${ele}px`, width: "5px" }}
           />
         );
       })}
-      {selectedAlgo === "Heap Sort" ? (
-        <p className="note">
-          <span>NOTE:</span> The algorithm used for heap sort is not a stable
-          one. So in some case you can't get the correct sorted order. Will make
-          it stable in the future
-        </p>
-      ) : (
-        ""
-      )}
       <div className="bottomContainer">
         <h1 className="title">Sorting Visualizer</h1>
         <div className="divider" />
@@ -209,19 +157,20 @@ const SortingVisualizer = () => {
             Quick Sort
           </p>
           <p
-            className={selectedAlgo === "Heap Sort" ? "active" : ""}
-            onClick={() => setAlgo("Heap Sort")}
+            className={selectedAlgo === "Selection Sort" ? "active" : ""}
+            onClick={() => setAlgo("Selection Sort")}
           >
-            Heap Sort
+            Selection Sort
+          </p>
+          <p
+            className={selectedAlgo === "Insertion Sort" ? "active" : ""}
+            onClick={() => setAlgo("Insertion Sort")}
+          >
+            Insertion Sort
           </p>
         </div>
         <div className="divider" />
-        <p
-          className="generate"
-          onClick={() =>
-            setValue(Math.floor(Math.random() * (20 - 10 * 1) + 10))
-          }
-        >
+        <p className="generate" onClick={() => setGenerate(!generate)}>
           Generate New Array
         </p>
         <div className="divider" />
@@ -230,14 +179,13 @@ const SortingVisualizer = () => {
           <Slider
             value={value}
             min={5}
-            max={200}
+            max={150}
             onChange={(_, newValue) => setValue(newValue)}
             style={{
               color: "#fff",
               width: "300px",
               margin: "0px 1rem",
             }}
-            disabled={disableSlider}
           />
         </div>
         <img

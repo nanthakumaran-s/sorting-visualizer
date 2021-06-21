@@ -16,7 +16,6 @@ export const getHeapSortAnimations = (arr) => {
 
     heapify(arr, i, 0, animations);
   }
-  console.log(arr);
   return animations;
 };
 
