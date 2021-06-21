@@ -1,0 +1,92 @@
+.visualizer {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+
+.bottomContainer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 0px 1.3rem;
+  background-color: #34495e;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.divider {
+  width: 2px;
+  height: 50px;
+  background-color: #fff;
+  margin: 0px 1.3rem;
+}
+
+.algorithms {
+  display: flex;
+  align-items: center;
+}
+
+.algorithms > p {
+  font-size: 1.2rem;
+  color: #fff;
+  padding: 1rem;
+  margin: 0px;
+}
+
+.algorithms > p:hover,
+.generate:hover {
+  background-color: #4ebd9c;
+  color: #000;
+  cursor: pointer;
+}
+
+.generate {
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 1rem;
+  margin: 0px;
+}
+
+.range {
+  display: flex;
+  align-items: center;
+}
+
+.text {
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 1rem;
+  margin: 0px;
+}
+
+.active {
+  background-color: #4ebd9c;
+  color: #000;
+}
+
+.arrayBar {
+  background-color: #4ebd9c;
+  display: inline-block;
+  margin: 0 1.5px;
+  text-align: center;
+}
+
+.note {
+  color: #000;
+  font-size: 1.1rem;
+  position: fixed;
+  bottom: 150px;
+}
+
+.note > span {
+  color: red;
+  font-weight: 900;
+}
