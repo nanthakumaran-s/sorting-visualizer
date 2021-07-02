@@ -5,10 +5,13 @@
   justify-content: center;
 }
 
-.bottomContainer {
+.bottom {
   position: fixed;
   bottom: 0;
   width: 100%;
+}
+
+.bottomContainer {
   padding: 1rem 1.3rem;
   background-color: #34495e;
   display: flex;
@@ -80,14 +83,14 @@
   border-radius: 0px 0px 10px 10px;
 }
 
-.note {
+.credits {
+  width: 97%;
+  text-align: right;
   color: #000;
-  font-size: 1.1rem;
-  position: fixed;
-  bottom: 150px;
+  font-size: 1.2rem;
 }
 
-.note > span {
-  color: red;
-  font-weight: 900;
+.credits > a {
+  text-decoration: none;
+  color: #4ebd9c;
 }

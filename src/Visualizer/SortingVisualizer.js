@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import { Slider } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import { getBubbleSortAnimations } from "../algorithms/bubbleSort";
@@ -12,12 +13,15 @@ const SortingVisualizer = () => {
   const [generate, setGenerate] = useState(false);
   const [selectedAlgo, setAlgo] = useState("Merge Sort");
   const [array, setArray] = useState([]);
+  const [inProgress, setInProgress] = useState(false);
+  var [count, setCount] = useState(0);
+  const [isGenerated, setIsGenerated] = useState(true);
 
   useEffect(() => {
     const createArr = () => {
       const array = [];
       for (let i = 0; i < value; i++) {
-        array.push(randomFromInterval(15, 600));
+        array.push(randomFromInterval(15, 500));
       }
       setArray(array);
     };
@@ -36,6 +40,12 @@ const SortingVisualizer = () => {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
+          setCount(count++);
+          if (count === animations.length) {
+            setInProgress(false);
+            setCount(0);
+            setIsGenerated(false);
+          }
         }, i * (value < 20 ? 100 : duration));
       } else {
         setTimeout(() => {
@@ -44,37 +54,49 @@ const SortingVisualizer = () => {
           if (value < 20) {
             arrayBars[barOneIdx].innerHTML = barTwoIdx;
           }
+          setCount(count++);
+          if (count === animations.length) {
+            setInProgress(false);
+            setCount(0);
+            setIsGenerated(false);
+          }
         }, i * (value < 20 ? 100 : duration));
       }
     }
   };
 
   const mergeSort = () => {
-    const animations = getMergeSortAnimations(array);
+    const arr = [...array];
+    const animations = getMergeSortAnimations(arr);
     animate(animations, 3);
   };
 
   const bubbleSort = () => {
-    const animations = getBubbleSortAnimations(array);
+    const arr = [...array];
+    const animations = getBubbleSortAnimations(arr);
     animate(animations, 1);
   };
 
   const quickSort = () => {
-    const animations = getQuickSortAnimations(array, 0, array.length - 1);
+    const arr = [...array];
+    const animations = getQuickSortAnimations(arr, 0, arr.length - 1);
     animate(animations, 10);
   };
 
   const selectionSort = () => {
-    const animations = getSelectionSortAnimations(array);
+    const arr = [...array];
+    const animations = getSelectionSortAnimations(arr);
     animate(animations, 10);
   };
 
   const insertionSort = () => {
-    const animations = getInsertionSortAnimations(array);
+    const arr = [...array];
+    const animations = getInsertionSortAnimations(arr);
     animate(animations, 10);
   };
 
   const sort = () => {
+    setInProgress(!inProgress);
     switch (selectedAlgo) {
       case "Merge Sort":
         mergeSort();
@@ -132,73 +154,101 @@ const SortingVisualizer = () => {
           />
         );
       })}
-      <div className="bottomContainer">
-        <h1 className="title">Sorting Visualizer</h1>
-        <div className="divider" />
-        <div className="algorithms">
+      <div className="bottom">
+        <p className="credits">
+          Made by{" "}
+          <a href="https://www.nanthakumaran.com/" target="blank">
+            Nanthakumaran
+          </a>
+        </p>
+        <div className="bottomContainer">
+          <h1 className="title">Sorting Visualizer</h1>
+          <div className="divider" />
+          <div className="algorithms">
+            <p
+              className={selectedAlgo === "Merge Sort" ? "active" : ""}
+              onClick={() => setAlgo("Merge Sort")}
+            >
+              Merge Sort
+            </p>
+            <p
+              className={selectedAlgo === "Bubble Sort" ? "active" : ""}
+              onClick={() => setAlgo("Bubble Sort")}
+            >
+              Bubble Sort
+            </p>
+            <p
+              className={selectedAlgo === "Quick Sort" ? "active" : ""}
+              onClick={() => setAlgo("Quick Sort")}
+            >
+              Quick Sort
+            </p>
+            <p
+              className={selectedAlgo === "Selection Sort" ? "active" : ""}
+              onClick={() => setAlgo("Selection Sort")}
+            >
+              Selection Sort
+            </p>
+            <p
+              className={selectedAlgo === "Insertion Sort" ? "active" : ""}
+              onClick={() => setAlgo("Insertion Sort")}
+            >
+              Insertion Sort
+            </p>
+          </div>
+          <div className="divider" />
           <p
-            className={selectedAlgo === "Merge Sort" ? "active" : ""}
+            className="generate"
             onClick={() => {
-              setAlgo("Merge Sort");
+              if (isGenerated === false) {
+                setIsGenerated(true);
+              }
+              !inProgress && setGenerate(!generate);
             }}
           >
-            Merge Sort
+            Generate New Array
           </p>
-          <p
-            className={selectedAlgo === "Bubble Sort" ? "active" : ""}
-            onClick={() => setAlgo("Bubble Sort")}
-          >
-            Bubble Sort
-          </p>
-          <p
-            className={selectedAlgo === "Quick Sort" ? "active" : ""}
-            onClick={() => setAlgo("Quick Sort")}
-          >
-            Quick Sort
-          </p>
-          <p
-            className={selectedAlgo === "Selection Sort" ? "active" : ""}
-            onClick={() => setAlgo("Selection Sort")}
-          >
-            Selection Sort
-          </p>
-          <p
-            className={selectedAlgo === "Insertion Sort" ? "active" : ""}
-            onClick={() => setAlgo("Insertion Sort")}
-          >
-            Insertion Sort
-          </p>
-        </div>
-        <div className="divider" />
-        <p className="generate" onClick={() => setGenerate(!generate)}>
-          Generate New Array
-        </p>
-        <div className="divider" />
-        <div className="range">
-          <p className="text">Size and Speed 👉 </p>
-          <Slider
-            value={value}
-            min={5}
-            max={150}
-            onChange={(_, newValue) => setValue(newValue)}
+          <div className="divider" />
+          <div className="range">
+            <p className="text">Size and Speed 👉 </p>
+            <Slider
+              value={value}
+              min={5}
+              max={150}
+              onChange={(_, newValue) => {
+                if (isGenerated === false) {
+                  setIsGenerated(true);
+                }
+                setValue(newValue);
+              }}
+              style={{
+                color: "#fff",
+                width: "300px",
+                margin: "0px 1rem",
+              }}
+              disabled={inProgress}
+            />
+          </div>
+          <img
+            src="https://www.summitcl.com/wp-content/uploads/2018/11/play-button-overlay-png-1.png"
+            alt="Sort!"
             style={{
-              color: "#fff",
-              width: "300px",
+              width: "60px",
+              height: "60px",
               margin: "0px 1rem",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              if (isGenerated === false) {
+                alert(
+                  "Generate New Array by clicking the generate button or drag the slider"
+                );
+              } else if (isGenerated === true) {
+                !inProgress && sort();
+              }
             }}
           />
         </div>
-        <img
-          src="https://www.summitcl.com/wp-content/uploads/2018/11/play-button-overlay-png-1.png"
-          alt="Sort!"
-          style={{
-            width: "60px",
-            height: "60px",
-            margin: "0px 1rem",
-            cursor: "pointer",
-          }}
-          onClick={() => sort()}
-        />
       </div>
     </div>
   );
